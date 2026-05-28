@@ -6,7 +6,7 @@
 <title>seshdev.io</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#080b0f;}
+html,body{width:100%;height:100%;background:#080b0f;}
 
 #splash{
   position:fixed;inset:0;
@@ -311,6 +311,8 @@ function runSplash() {
     splash.style.opacity = '0';
     setTimeout(() => {
       splash.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
       document.getElementById('main-site').style.display = 'block';
     }, 280);
   }
