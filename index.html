@@ -366,6 +366,9 @@ window.addEventListener('load', () => { setTimeout(runSplash, 100); });
   .nav-links a::after { content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 1px; background: var(--accent); transform: scaleX(0); transition: transform 0.2s; }
   .nav-links a:hover { color: var(--accent); }
   .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-links a.active { color: var(--accent); animation: navBlink 0.6s ease; }
+  .nav-links a.active::after { transform: scaleX(1); }
+  @keyframes navBlink { 0%,100%{ opacity:1; color:var(--accent); } 25%{ opacity:0.15; } 50%{ opacity:1; } 75%{ opacity:0.15; } }
   .nav-status { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--green); }
   .pulse { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.5; transform:scale(1.4); } }
@@ -840,6 +843,32 @@ window.addEventListener('load', () => { setTimeout(runSplash, 100); });
   window.addEventListener('scroll', () => { bar.style.width = (window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%'; });
   const obs = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} }); }, {threshold:0.1});
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Nav active highlight + blink on scroll
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sections = ['skills','experience','projects','about'].map(id => document.getElementById(id));
+  function setActiveNav(id) {
+    navLinks.forEach(a => {
+      a.classList.remove('active');
+      if(a.getAttribute('href') === '#'+id) {
+        a.classList.remove('active');
+        void a.offsetWidth; // force reflow to restart animation
+        a.classList.add('active');
+      }
+    });
+  }
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) setActiveNav(e.target.id); });
+  }, {threshold: 0.05, rootMargin: '-10% 0px -60% 0px'});
+  sections.forEach(s => { if(s) navObs.observe(s); });
+
+  // Also blink on click
+  navLinks.forEach(a => {
+    a.addEventListener('click', () => {
+      const id = a.getAttribute('href').slice(1);
+      setActiveNav(id);
+    });
+  });
 </script>
 </body>
 </html>
